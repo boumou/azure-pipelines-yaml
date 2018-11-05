@@ -1,0 +1,26 @@
+parameters:
+  body: 'Hello World!'
+  number: ''
+  repo: ''
+  token: ''
+
+steps:
+- script: |
+    if [ -z "$TOKEN" ]; then
+      echo "Please input your GITHUB_TOKEN value."
+      exit 1
+    else
+      curl \
+      --data "{ \"body\": \"$BODY\" }" \
+      --header "Authorization: token $TOKEN" \
+      --header "Content-Type: application/json" \
+      --request POST \
+      --silent \
+      --show-error \
+      --url "https://api.github.com/repos/$REPO/issues/$NUMBER/comments"
+    fi
+  env:
+    BODY: ${{ parameters.body }}
+    TOKEN: ${{ parameters.token }}
+    NUMBER: ${{ parameters.number }}
+    REPO: ${{ parameters.repo }}
