@@ -1,5 +1,5 @@
 parameters:
-  body: 'Hello World!'
+  comment: 'Hello World!'
   number: ''
   repo: ''
   token: ''
@@ -11,7 +11,7 @@ steps:
       exit 1
     else
       curl \
-      --data $(echo '{}' | jq --arg body "$BODY" '.body = $body') \
+      --data $(echo '{}' | jq --arg body "$COMMENT" '.body = $body') \
       --header "Authorization: token $TOKEN" \
       --header "Content-Type: application/json" \
       --request POST \
@@ -21,7 +21,7 @@ steps:
     fi
   displayName: 'Create a comment'
   env:
-    BODY: ${{ parameters.body }}
+    COMMENT: ${{ parameters.comment }}
     TOKEN: ${{ parameters.token }}
     NUMBER: ${{ parameters.number }}
     REPO: ${{ parameters.repo }}
