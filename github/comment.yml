@@ -19,6 +19,7 @@ steps:
       --show-error \
       --url "https://api.github.com/repos/$REPO/issues/$NUMBER/comments"
     fi
+  displayName: 'Create a comment'
   env:
     BODY: ${{ parameters.body }}
     TOKEN: ${{ parameters.token }}
