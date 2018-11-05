@@ -1,0 +1,24 @@
+steps:
+- script: |
+    # Ref. https://github.com/hashicorp/terraform-github-actions
+    
+    set +e
+    OUTPUT=$(sh -c "terraform validate -no-color" 2>&1)
+    SUCCESS=$?
+    echo "$OUTPUT"
+    set -e
+
+    if [ $SUCCESS -eq 0 ]; then
+        exit 0
+    fi
+
+    COMMENT="#### \`terraform validate\` Failed
+    \`\`\`
+    $OUTPUT
+    \`\`\`"
+    PAYLOAD=$(echo '{}' | jq --arg body "$COMMENT" '.body = $body')
+    COMMENTS_URL="https://api.github.com/repos/$BUILD_REPOSITORY_NAME/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/comments"
+    curl -s -S -H "Authorization: token $(GITHUB_TOKEN)" -H "Content-Type: application/json" -d "$PAYLOAD" "$COMMENTS_URL" > /dev/null
+
+    exit $SUCCESS
+  displayName: 'Validate Terraform configuration'

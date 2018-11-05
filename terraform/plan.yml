@@ -1,0 +1,34 @@
+steps:
+- script: |
+    # Ref. https://github.com/hashicorp/terraform-github-actions
+    
+    WORKSPACE=${TF_WORKSPACE:-default}
+    terraform workspace select "$WORKSPACE"
+
+    set +e
+    OUTPUT=$(sh -c "TF_IN_AUTOMATION=true terraform plan -no-color -input=false" 2>&1)
+    SUCCESS=$?
+    echo "$OUTPUT"
+    set -e
+
+    COMMENT=""
+
+    # If not successful, post failed plan output.
+    if [ $SUCCESS -ne 0 ]; then
+        COMMENT="#### \`terraform plan\` Failed
+    \`\`\`
+    $OUTPUT
+    \`\`\`"
+    else
+        FMT_PLAN=$(echo "$OUTPUT" | sed -r -e 's/^  \+/\+/g' | sed -r -e 's/^  ~/~/g' | sed -r -e 's/^  -/-/g')
+        COMMENT="\`\`\`diff
+    $FMT_PLAN
+    \`\`\`"
+    fi
+
+    PAYLOAD=$(echo '{}' | jq --arg body "$COMMENT" '.body = $body')
+    COMMENTS_URL="https://api.github.com/repos/$BUILD_REPOSITORY_NAME/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/comments"
+    curl -s -S -H "Authorization: token $(GITHUB_TOKEN)" -H "Content-Type: application/json" -d "$PAYLOAD" "$COMMENTS_URL" > /dev/null
+
+    exit $SUCCESS
+  displayName: 'Create Terraform execution plan'

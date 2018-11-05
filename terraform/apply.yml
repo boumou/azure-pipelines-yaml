@@ -1,0 +1,6 @@
+steps:
+- script: |
+    WORKSPACE=${TF_WORKSPACE:-default}
+    terraform workspace select "$WORKSPACE"
+    TF_IN_AUTOMATION=true terraform apply -no-color -auto-approve -input=false
+  displayName: 'Apply Terraform configuration'
