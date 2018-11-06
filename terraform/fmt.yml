@@ -1,3 +1,6 @@
+parameters:
+  env: ''
+
 steps:
 - script: |
     # Ref. https://github.com/hashicorp/terraform-github-actions
@@ -35,3 +38,4 @@ steps:
 
     exit $SUCCESS
   displayName: 'Check if Terraform configuration is formatted'
+  env: ${{ parameters.env }}

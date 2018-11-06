@@ -1,3 +1,6 @@
+parameters:
+  env: ''
+
 steps:
 - script: |
     # Ref. https://github.com/hashicorp/terraform-github-actions
@@ -32,3 +35,4 @@ steps:
 
     exit $SUCCESS
   displayName: 'Create Terraform execution plan'
+  env: ${{ parameters.env }}

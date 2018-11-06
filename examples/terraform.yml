@@ -19,12 +19,17 @@ jobs:
   steps:
   - template: terraform/fmt.yml@templates
 
-- job: validate
+- job: init
   dependsOn: fmt
   condition: succeeded()
   steps:
-  - template: terraform/init.yml@templates
-  - template: terraform/validate.yml@templates
+  - template: terraform/init.yml
+
+- job: validate
+  dependsOn: init
+  condition: succeeded()
+  steps:
+  - template: terraform/validate.yml
   
 - job: plan
   dependsOn: validate

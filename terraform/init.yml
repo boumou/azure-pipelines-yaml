@@ -1,3 +1,6 @@
+parameters:
+  env: ''
+
 steps:
 - script: |
     # Ref. https://github.com/hashicorp/terraform-github-actions
@@ -22,3 +25,4 @@ steps:
 
     exit $SUCCESS
   displayName: 'Initialize Terraform'
+  env: ${{ parameters.env }}
