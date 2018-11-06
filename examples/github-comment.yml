@@ -1,0 +1,19 @@
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: GitHub
+      name: innovationnorway/azure-pipelines-yaml
+
+jobs:
+
+- job: comment
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - template: github/comment.yml@templates
+    parameters:
+      body: 'This is a comment.'
+      number: '$(system.pullRequest.pullRequestNumber)'
+      repo: '$(build.repository.name)'
+      token: '$(GITHUB_TOKEN)'

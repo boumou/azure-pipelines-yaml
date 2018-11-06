@@ -1,0 +1,34 @@
+name: terraform
+
+# pr:
+# - master
+
+trigger:
+- master
+
+resources:
+  repositories:
+  - repository: templates
+    type: github
+    endpoint: GitHub
+    name: innovationnorway/azure-pipelines-yaml
+    
+jobs:
+
+- job: validate
+  steps:
+  - template: terraform/fmt.yml@templates
+  - template: terraform/init.yml@templates
+  - template: terraform/validate.yml@templates
+
+- job: plan
+  dependsOn: validate
+  steps:
+  - template: terraform/plan.yml@templates
+  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+
+- job: apply
+  dependsOn: plan
+  steps:
+  - template: terraform/apply.yml@templates
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
